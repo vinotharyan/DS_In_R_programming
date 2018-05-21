@@ -1,0 +1,205 @@
+---
+title: "Untitled"
+author: "Vinoth Aryan Nagabosshanam"
+date: "May 20, 2017"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+  word_document: default
+---
+# step to create a list 
+```{r}
+list1<-list(1,2,3,4,5,6,6,6,7)
+
+print(typeof(list1))
+```
+
+# to create a martic 
+```{r}
+a<-c(1,2,3,4,5)
+b<-c(6,7,8,9,10)
+
+m<-matrix(c(a,b),nrow=2,byrow=T)
+print(m)
+```
+
+# create a data frame
+```{r}
+a<-c(1,2,3,4,5)
+b<-c('a','b','c','d','e')
+c<-c('vino','in','gggg','jjj','hhh')
+
+df<-data.frame(a,b,c)
+print(typeof(df))
+
+df
+```
+
+#sequence  its give the print space sequence 
+```{r}
+v<-seq(1,10,1)
+v
+v1<-seq(1,20, 2)
+v1
+
+v2<-seq(1,10,3)
+v2
+```
+
+# square
+```{r}
+a1<-c(10,11,12)
+sqrt(a1)
+```
+
+# defeine a function
+```{r}
+cube<-function(x){x*x*x}
+cube(3)
+
+```
+# step import the csv
+
+```{r}
+mba<-read.csv("B:\\data science course of udemy\\Datasets_BA 2\\mba.csv")
+# to get name of colunms in list
+ls(mba)
+
+fraudata<-read.csv("B:\\data science course of udemy\\Datasets_BA 2\\fraudData.csv")
+# to get the first 10 lines of data
+head(fraudata)
+#to list names
+ls(fraudata)
+#summary of data set
+
+summary(fraudata)
+# to get the type of colunms in data set
+str(fraudata)
+```
+
+# basic function can done in the data set 
+
+```{r}
+
+
+or<-order(fraudata$creditLine)
+
+# to arrange the creditline in order maner we use this command
+fraudata[or,]
+
+
+#to arrange int descending order
+fraudata[rev(order(fraudata$creditLine)),]
+
+```
+
+# combine the different data set
+```{r}
+plasma<-read.csv("B:\\data science course of udemy\\Datasets_BA 2\\Plasma.csv")
+diec<-read.csv("B:\\data science course of udemy\\Datasets_BA 2\\Diabetes.csv")
+pd<-cbind(plasma,diec)
+```
+
+# if its un equal
+```{r}
+tran_h<-read.csv("B:\\data science course of udemy\\Datasets_BA 2\\hour_transaction.csv")
+tran_d<-read.csv("B:\\data science course of udemy\\Datasets_BA 2\\transaction_data.csv")
+tt<-rbind(tran_h,tran_d)
+
+```
+
+# if both unequal we use merge function
+```{r}
+all_tran<-read.csv("B:\\data science course of udemy\\Datasets_BA 2\\all_transactions.csv")
+cre<-read.csv("B:\\data science course of udemy\\Datasets_BA 2\\creditdata.csv")
+
+slc<-merge(all_tran,cre)
+```
+
+# to read text file by using following command
+```{r}
+vitcims<-readLines("B:\\data science course of udemy\\Datasets_BA 2\\victims.txt")
+vitcims
+
+dfv<-data.frame(vitcims)
+dfv
+
+# grepl which used to find extact sentence 
+com<-grepl("^%", vitcims)
+com
+
+# we are viewing without those element
+text<-vitcims[!com]
+text
+# code used to split lines in colunms
+out <- strsplit(text,',')
+
+# step convert in data fram
+nl<-matrix(unlist(out),nrow=length(out),byrow = T)
+# assign col names
+colnames(nl)<-c("name","birthyear","deathyear")
+ti_victims<-as.data.frame(nl)
+summary(nl)
+
+# to conver year into numer
+ti_victims$birthyear <-as.numeric(ti_victims$birthyear)
+ti_victims$deathyear<-as.numeric(ti_victims$deathyear)
+summary(ti_victims)
+str(ti_victims)
+
+```
+
+```{r}
+telecalls<-read.csv("B:\\data science course of udemy\\Datasets_BA 2\\telecomCalls.csv")
+```
+
+# replace negative values in colums with na values
+```{r}
+upd_tel<-apply(telecalls,MARGIN = 2,
+               function(a)
+                 {ifelse (a==99|a==-99, NA,a)})
+upd_tel
+```
+
+
+# now clear the NA with mean valur
+```{r}
+apply(upd_tel,MARGIN = 2,function(a){mean(a,na.rm = T)})
+
+library(zoo)
+na.aggregate(upd_tel)
+```
+
+# install lattice package
+```{r}
+library("lattice")
+data(barley)
+tapply(barley$yield,barley$site, mean)
+```
+
+#  how to pload othe rthe stastical package
+```{r}
+library("foreign")
+
+can<-read.spss("B:\\data science course of udemy\\Datasets_BA 2\\cancer.sav")
+
+cans<-as.data.frame(can)
+str(cans)
+summary(cans)
+# step to fill the na value with median
+cans$TOTALCW6[is.na(cans$TOTALCW6)]<-median(cans$TOTALCW6,na.rm=TRUE)
+summary(cans)
+
+cor(cans)
+```
+
+#to check the correlation and covariance between the dataset by using corrgram
+```{r}
+#install.packages("corrgram")
+library(corrgram)
+corrgram(cans)
+# red color incidates the negative correlation 
+# blue color incidates the postive correlation
+```
+
