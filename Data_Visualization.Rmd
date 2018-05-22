@@ -1,0 +1,90 @@
+---
+title: "Data"
+author: "Vinoth Aryan Nagabosshanam"
+date: "March 21, 2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+#Data Visualization 
+```{r}
+
+mtcar<-mtcars
+plot(mtcar$cyl,type = "s",col="red",ylim = c(0,30))
+plot(mtcar$cyl,type = "o",col="red",ylim = c(0,30))
+lines(mtcar$mpg,type = "o",col="blue")
+
+#box plot
+boxplot(mtcar$mpg,col="green")
+
+boxplot(mtcars$mpg~mtcars$cyl,col="red",xlab="noofcylinder",ylab="noofmiles",main="car milage")
+```
+# playing with iris data set
+```{r}
+library(corrgram)
+plot(iris)
+
+corrgram(iris)
+plot(iris$Species,iris$Petal.Length)
+
+plot(iris$Sepal.Length)
+plot(iris$Sepal.Length,type="l")
+
+hist(iris$Petal.Length,col="red")
+
+pie(table(iris$Species))
+
+sunflowerplot(iris$Petal.Length,col=iris$Species)  
+
+par(mfrow=c(2,2))
+hist(iris$Sepal.Length)
+boxplot(iris$Sepal.Width)
+
+```
+
+#explore the VADeaths data set
+```{r}
+data("VADeaths")
+head(VADeaths)
+
+par(mfrow=c(2,2))
+hist(VADeaths,col=heat.colors(7))
+hist(VADeaths,col=heat.colors(8))
+pie(table(VADeaths))
+boxplot(VADeaths,col=VADeaths)
+```
+
+
+# play with more color we need a package called hexbin
+```{r}
+#install.packages("hexbin")
+library(hexbin)
+plot(hexbin(iris$Species,iris$Sepal.Length))
+
+library(vcd)
+mosaic(Titanic)
+#install.packages("tabplot")
+library(tabplot)
+tableplot(iris)
+
+
+heatmap(as.matrix(mtcar))
+```
+
+# create a plot using map of country
+```{r}
+#install.packages("raster")
+library(raster)
+
+alt<-getData('alt',country="IND")
+plot(alt)
+
+gadm<-getData('GADM',country="IND",level=3)
+head(gadm)
+table(gadm$NAME_1)
+gadm_tamil_nadu=subset(gadm,gadm$NAME_1=="Tamil Nadu")
+plot(gadm_tamil_nadu)
+```
+
+# other
