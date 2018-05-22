@@ -1,0 +1,66 @@
+---
+title: "Predictive_Analysis"
+author: "Vinoth Aryan Nagabosshanam"
+date: "March 23 2017"
+output: pdf_document
+---
+
+#predictive analysis Simple linear regression example
+```{r}
+wc<-read.csv("B:\\data science courses\\Datasets_BA 2\\wc-at.csv")
+head(wc)
+str(wc)
+summary(wc)
+
+```
+
+#Aanlysis data
+###EDA part
+```{r}
+
+## to check the data is normal or not
+qqnorm(wc$Waist)
+qqline(wc$Waist)
+# to make more normal
+log_wc_waist<-log(wc$Waist)
+qqnorm(log_wc_waist)
+qqline(log_wc_waist)
+# the below gieven figure look normal data
+qqnorm(wc$AT)
+qqline(wc$AT)
+# without take long its look normal
+boxplot(wc$Waist)
+hist(wc$AT,col="red")
+```
+
+#now buliding simple regression model
+```{r}
+plot(wc$Waist,wc$AT)
+# data strong postive correlation
+library(corrgram)
+corrgram(wc)
+
+# to check the coorelation value
+cor(wc)
+# r vlaue is .81 is good correlation
+
+# now buliding model
+
+mod<-lm(wc$AT~wc$Waist)
+summary(mod)
+
+
+#other model with log value of wast
+cor(log_wc_waist,wc$AT)
+mod2<-lm(wc$AT~log_wc_waist)
+summary(mod2)
+
+# to come with cofidence interval
+confint(mod,level = 0.95)
+
+
+# the prediction interval
+predict(mod,interval="predict")
+
+```
+
