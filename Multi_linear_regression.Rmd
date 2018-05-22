@@ -1,0 +1,181 @@
+---
+title: "multiple_linear_regression"
+author: "Vinoth Aryan Nagabosshanam"
+date: "March 22, 2017"
+output: pdf_document
+---
+# simple multiple linear regression problem
+```{r}
+cars_data<-read.csv("B:\\data science courses\\Datasets_BA 2\\Cars.csv")
+head(cars_data)
+str(cars_data)
+
+```
+
+# Exploratory Data Analysis
+# Measures of Central Tendency to know the maen medium and mode if we summary dataset
+# we will get all central tendency
+```{r}
+summary(cars_data)
+```
+
+# Measures of Dispersion means find out the variance and sd of data in data set
+```{r}
+sapply(cars_data,var)
+sapply(cars_data,sd)
+```
+
+
+# Graphical representations
+```{r}
+
+plott<-function(x){
+  par(mfrow=c(1,3))
+  hist(x)
+  boxplot(x)
+  barplot(x)
+  
+ }
+
+plott(cars_data$VOL)
+plott(cars_data$HP)
+plott(cars_data$SP)
+plott(cars_data$WT)
+```
+
+# Find the correlation b/n Output and input
+```{r}
+library(corrgram)
+corrgram(cars_data)
+
+cor_plot<-function(x){
+  plot(x,cars_data$MPG)
+}
+
+cor_plot(cars_data$HP)
+# by look at the below given diagram its negative correled
+
+
+cor_plot(cars_data$VOL)
+# no correlation
+
+cor_plot(cars_data$SP)
+# neagtive correlation
+
+cor_plot(cars_data$WT)
+# no correlation 
+
+# to all the correlation
+pairs(cars_data)
+cor(cars_data)
+```
+
+if we see that above  given plot its clear that there is no correlation mpg with any other variabler and but the coffienct problem which has the hp is storng correlated to sp and vol to wt which leads collinearity problem. so we can take  one variable insteat of two variable.
+
+#Partial Correlation matrix - Pure Correlation  b/n the varibles
+```{r}
+
+#install.packages("corpcor")
+library(corpcor)
+
+cor2pcor(cor(cars_data))
+
+
+```
+even we cross check correlation between the vol and wt and hp and sp it has high correlation value
+
+# now building a muiltple linear regression model
+```{r}
+model_car<-lm(MPG~HP+SP+VOL+WT,data = cars_data)
+summary(model_car)
+
+```
+# if we see the pvaluse of vol and wt are in sufficient beaceuse it greater than o.05
+# now we are creatting module using weight and volume
+
+```{r}
+mode_c_vol<-lm(cars_data$MPG~cars_data$VOL)
+summary(mode_c_vol)
+# if we see the pavalue its not insufficient for volum
+
+#now we will check for weight
+mode_c_w<-lm(cars_data$MPG~cars_data$WT)
+summary(mode_c_w)
+#if we see the pavalue its not insufficient for weight
+
+#let comebind both together
+mode_c_vw<-lm(cars_data$MPG~cars_data$WT+cars_data$VOL)
+summary(mode_c_vw)
+
+# if we see the p value both insifficent 
+#so there colinearnity problem
+```
+
+# So there exists a collinearity problem b/n volume and weight
+### Scatter plot matrix along with Correlation Coefficients
+
+```{r}
+panel.cor<-function(x,y,digits=2,prefix="",cex.cor)
+{
+  usr<- par("usr"); on.exit(par(usr))
+  par(usr=c(0,1,0,1))
+  r=(cor(x,y))
+  txt<- format(c(r,0.123456789),digits=digits)[1]
+  txt<- paste(prefix,txt,sep="")
+  if(missing(cex.cor)) cex<-0.4/strwidth(txt)
+  text(0.5,0.5,txt,cex=cex)
+}
+pairs(cars_data,upper.panel = panel.cor,main="Scatter plot matrix with Correlation coefficients")
+```
+
+
+# It is Better to delete influential observations rather than deleting entire column which is 
+# costliest process
+# Deletion Diagnostics for identifying influential observations
+```{r}
+influence.measures(model_car)
+library(car)
+## plotting Influential measures 
+influenceIndexPlot(model_car,id.n=3) # index plots for infuence measures
+influencePlot(model_car,id.n=3) # A user friendly representation of the above
+
+```
+# after see the plot we can see that 77 row and 71 row are influence data
+```{r}
+model_car2<-lm(MPG~VOL+SP+HP+WT,data=cars_data[-c(71,77),])
+summary(model_car2)
+
+```
+ 
+# after see p value of weight its that its great influence so we remove wt variable
+
+## Variance Inflation factor to check collinearity b/n variables 
+
+## vif>10 then there exists collinearity among all the variables 
+```{r}
+vif(model_car)
+```
+# wt has high variance influence so remove the wt in model
+## Added Variable plot to check correlation b/n variables and o/p variable
+```{r}
+avPlots(model_car,id.n=2,id.cex=0.7)
+```
+
+
+## VIF and AV plot has given us an indication to delete "wt" variable
+ 
+## atlast the coreect fianal mode
+```{r}
+## Final model
+final_model<-lm(MPG~VOL+SP+HP,data=cars_data)
+summary(final_model)
+
+# Evaluate model LINE assumptions 
+plot(final_model)
+#Residual plots,QQplot,std-Residuals Vs Fitted,Cook's Distance 
+qqPlot(model_car,id.n = 5)
+# QQ plot of studentized residuals helps in identifying outlier 
+
+
+```
+
