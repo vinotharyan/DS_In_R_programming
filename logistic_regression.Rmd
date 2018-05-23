@@ -1,0 +1,59 @@
+---
+title: "Untitled"
+author: "Vinoth Aryan Nagabosshanam"
+date: "March 21, 2017"
+output: pdf_document
+---
+# Logistic Regression
+here in this problem we are use logistic regression to panitents use the attorney or not based on the date set given 
+so to find we are apply logistic regression model
+```{r}
+cla<-read.csv("B:\\data science courses\\Datasets_BA 2\\Claimants.csv")
+head(cla)
+
+str(cla)
+# convert int to factor for few variable 
+cla$CLMSEX<-as.factor(cla$CLMSEX)
+cla$CLMINSUR<-as.factor(cla$CLMINSUR)
+cla$SEATBELT<-as.factor(cla$SEATBELT)
+str(cla)
+summary(cla)
+
+
+```
+
+#fiting  a Logistic Regression model
+```{r}
+model_lgm<-glm(cla$ATTORNEY~cla$CLMSEX+cla$CLMINSUR+cla$SEATBELT+cla$CLMAGE+cla$LOSS,family = binomial)
+summary(model_lgm)
+```
+
+** to get the  Odds Ratio we need to use the expo **
+```{r}
+exp(coef(model_lgm))
+```
+
+** to get Confusion matrix table 
+```{r}
+prob <- predict(model_lgm,type=c("response"),cla)
+#prob
+confusion<-table(prob>0.5,cla$ATTORNEY)
+confusion
+
+```
+
+** To get Accuracy of the model **
+```{r}
+Accuracy<-sum(diag(confusion)/sum(confusion))
+Accuracy
+```
+
+
+```{r}
+#install.packages("ROCR")
+library(ROCR)
+rocrpred<-prediction(prob,cla$ATTORNEY)
+rocrperf<-performance(rocrpred,'tpr','fpr')
+plot(rocrperf,colorize=T,text.adj=c(-0.2,1.7))
+```
+
